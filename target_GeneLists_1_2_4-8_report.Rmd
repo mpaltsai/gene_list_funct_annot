@@ -268,6 +268,7 @@ write.table(final_new_targets_genes_batch[,513:1024], "final_GeneLists_1_2_4-8_g
 
 
 ```{r,  echo=FALSE}
+setwd("/home/ismini/Documents/bioinfo-grad/mavrothalassitis/GeneLists_1_2_4-8/")
 
 ###new_targets vs genes_OldProt##########################
 
@@ -326,7 +327,8 @@ final3 = rbind(labels3,
 DF3 <- read.table(text=final3[1,], sep = "_", as.is = TRUE)
 
 final_new_targets_genes_OldVSall = rbind(t(DF3), final3[-1,])
-write.table(final_new_targets_genes_OldVSall, "final_GeneLists_1_2_4-8_genes_OldVSall.csv", sep=",", na="")
+write.table(final_new_targets_genes_OldVSall[,1:544], "final_GeneLists_1_2_4-8_genes_OldVSall_part1.csv", sep=",", na="")
+write.table(final_new_targets_genes_OldVSall[,545:1088], "final_GeneLists_1_2_4-8_genes_OldVSall_part2.csv", sep=",", na="")
 
 
 #merge 3 last files to proceed with analysis
@@ -346,6 +348,7 @@ write.table(final_new_targets_genes_OldVSall, "final_GeneLists_1_2_4-8_genes_Old
 
 ### Common genes with fdr<0.05:
 ```{r, echo=FALSE}
+setwd("/home/ismini/Documents/bioinfo-grad/mavrothalassitis/GeneLists_1_2_4-8/")
 
 all_labels <- c(labels1, labels2, labels3)
 max_rows <- max(max_genes_batch_comparisons, max_genes_OldProt_comparisons, max_genes_OldVSall_comparisons)
@@ -369,8 +372,8 @@ sign_new_targets <- rbind(labels(pvalues_mat[,sign_p_values_index]), all_labels[
 dimnames(sign_new_targets) <- list(c("Gene list", "Comparison", "pvalue", "Bonferroni correction", "BH correction", "q values", "common genes", rep("", 231)), c(1:length(sign_p_values_index)))
 
 
-write.table(sign_new_targets, "sign_GeneLists_1_2_4-8.csv", sep=",", na="")
-
+write.table(sign_new_targets[,1:649], "sign_GeneLists_1_2_4-8_part1.csv", sep=",", na="")
+write.table(sign_new_targets[,650:1298], "sign_GeneLists_1_2_4-8_part2.csv", sep=",", na="")
 
 #Common genes with an fdr<0.05
 sign_fdr_index <-  which(pvalues<0.05 & pvalues_fdr<0.05)
@@ -382,7 +385,9 @@ dimnames(sign_common_mat) <- list(c("Gene list", "Comparison", "common genes", r
 #sign_fdr_genes <- unique(sign_common[,!is.na(sign_common) & !sign_common==""])
 #sign_fdr_genes
 
-write.table(sign_common_mat, "sign_fdr_genes.csv", sep=",", na="")
+write.table(sign_common_mat[,1:576], "sign_fdr_genes_part1.csv", sep=",", na="")
+write.table(sign_common_mat[,577:1152], "sign_fdr_genes_part2.csv", sep=",", na="")
+
 #sign_matrix <- matrix(data=unlist(strsplit(sign_new_targets[1,], " versus ")), nrow=2,ncol=10)
 #rm(list=ls())
 ```
@@ -439,6 +444,7 @@ write.table(fun_annot_mat_mm[,1:578], "funct_annot_sign_fdr_genes_mmusculus_part
 
 write.table(fun_annot_mat_hs, "funct_annot_sign_fdr_genes_hsapiens.csv", sep=",",  na="")
 ```{r, echo=FALSE}
+setwd("/home/ismini/Documents/bioinfo-grad/mavrothalassitis/GeneLists_1_2_4-8/")
 
 isws_etsi = function(mat1,mat2){
 
