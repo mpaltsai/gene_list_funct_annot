@@ -1,0 +1,8 @@
+*.RData
+*.Rhistory
+analysis_with_dataset_genes/
+input-data/
+New_targets/
+ChIPseq/
+Analysis_all_datasets
+GeneLists_1_2_4-8/
