@@ -390,7 +390,7 @@ write.table(final_targets_genes_1_2_4_8, "final_new_targets_genes_1_2_4_8.csv", 
 ```{r, echo=FALSE}
 setwd("/home/ismini/Documents/bioinfo-grad/mavrothalassitis/New_targets/")
 
-all_labels <- c(labels1, labels2, labels3)
+all_labels <- c(labels1, labels2, labels3, labels4)
 max_rows <- max(max_genes_batch_comparisons, max_genes_OldProt_comparisons, max_genes_OldVSall_comparisons, max_genes_1_2_4_8_comparisons)
 common1 <- apply (common1, 2, function (x) {length (x) <- max_rows; return (x)})
 common2 <- apply (common2, 2, function (x) {length (x) <- max_rows; return (x)})
@@ -485,7 +485,7 @@ write.table(fun_annot_mat_hs, "funct_annot_sign_fdr_genes_hsapiens.csv", sep=","
 ```{r, echo=FALSE}
 setwd("/home/ismini/Documents/bioinfo-grad/mavrothalassitis/New_targets/")
 
-isws_etsi = function(mat1,mat2){
+isws_etsi = function(mat1,mat2,file_name){
 
 ###mat1 is a matrix with the results of functional annotation returned from gprofiler
 ###mat2 is the matrix containing common genes in each column from each comparison
@@ -498,13 +498,14 @@ dim1 = dim(mat1[x][[1]]["p.value"])[1]
 if (dim1==0){
 dim1=1
 #initialize a matrix
-m = matrix(NA, nrow = dim1, ncol = 5)
+m = matrix(NA, nrow = dim1, ncol = 6)
 
-m[,1] = labels(pvalues_mat[, sign_fdr_index])[x]
-m[,2] = all_labels[sign_fdr_index][x]
-m[,3] = pvalues[sign_fdr_index][x]
-m[,4] = pvalues_fdr[sign_fdr_index][x]
-m[,5] = qobj$qvalues[sign_fdr_index][x]
+m[,1] = file_name
+m[,2] = labels(pvalues_mat[, sign_fdr_index])[x]
+m[,3] = all_labels[sign_fdr_index][x]
+m[,4] = pvalues[sign_fdr_index][x]
+m[,5] = pvalues_fdr[sign_fdr_index][x]
+m[,6] = qobj$qvalues[sign_fdr_index][x]
 #m[,6] = mat1[x][[1]]["p.value"]
 #m[,7] = mat1[x][[1]]["intersection"]
 #m[,8] = mat1[x][[1]]["term.name"]
@@ -519,13 +520,14 @@ list_df[[x]] = m_df
 }
 else {
 #initialize a matrix
-m = matrix(NA, nrow = dim1, ncol = 5)
+m = matrix(NA, nrow = dim1, ncol = 6)
 
-m[,1] = labels(pvalues_mat[, sign_fdr_index])[x]
-m[,2] = all_labels[sign_fdr_index][x]
-m[,3] = pvalues[sign_fdr_index][x]
-m[,4] = pvalues_fdr[sign_fdr_index][x]
-m[,5] = qobj$qvalues[sign_fdr_index][x]
+m[,1] = file_name
+m[,2] = labels(pvalues_mat[, sign_fdr_index])[x]
+m[,3] = all_labels[sign_fdr_index][x]
+m[,4] = pvalues[sign_fdr_index][x]
+m[,5] = pvalues_fdr[sign_fdr_index][x]
+m[,6] = qobj$qvalues[sign_fdr_index][x]
 #m[,6] = mat1[x][[1]]["p.value"]
 #m[,7] = mat1[x][[1]]["intersection"]
 #m[,8] = mat1[x][[1]]["term.name"]
@@ -543,22 +545,22 @@ list_df
 }
 
 ###Mus musculus
-funct_annot_mm = isws_etsi(result_mm, sign_common)
+funct_annot_mm = isws_etsi(result_mm, sign_common, file_name="New_targets")
 
 super_mat_mm = do.call(rbind, funct_annot_mm)
 dim(super_mat_mm)
-colnames(super_mat_mm) = c("dataset", "comparison", "comparison_pvalue", "comparison_fdr", "comparison_qvalue", "gprofiler_pvalue", "gprofiler_genes", "gprofiler_GO_terms", "common_genes" )
+colnames(super_mat_mm) = c("filename", "dataset", "comparison", "comparison_pvalue", "comparison_fdr", "comparison_qvalue", "gprofiler_pvalue", "gprofiler_genes", "gprofiler_GO_terms", "common_genes" )
 
-write.table(super_mat_mm[,1:8], "isws_etsi_mus_musculus_new_targets.csv", sep=",",  na="")
+write.table(super_mat_mm[,1:9], "isws_etsi_mus_musculus_new_targets.csv", sep=",",  na="", row.names = FALSE)
 
 ###Homo sapiens
-funct_annot_hs = isws_etsi(result_hs, sign_common)
+funct_annot_hs = isws_etsi(result_hs, sign_common, file_name="New_targets")
 
 super_mat_hs = do.call(rbind, funct_annot_hs)
 dim(super_mat_hs)
-colnames(super_mat_hs) = c("dataset", "comparison", "comparison_pvalue", "comparison_fdr", "comparison_qvalue", "gprofiler_pvalue", "gprofiler_genes", "gprofiler_GO_terms", "common_genes" )
+colnames(super_mat_hs) = c("filename", "dataset", "comparison", "comparison_pvalue", "comparison_fdr", "comparison_qvalue", "gprofiler_pvalue", "gprofiler_genes", "gprofiler_GO_terms", "common_genes" )
 
-write.table(super_mat_hs[,1:8], "isws_etsi_homo_sapiens_new_targets.csv", sep=",",  na="")
+write.table(super_mat_hs[,1:9], "isws_etsi_homo_sapiens_new_targets.csv", sep=",",  na="", row.names = FALSE)
 
 save.image(file="New_targets_work_space.RData")
 ```

@@ -1,5 +1,5 @@
 ---
-title: "New targets"
+title: "ChIPseq"
 author: "Ismini Baltsavia"
 date: "July 23, 2019"
 output: html_document
@@ -18,13 +18,13 @@ BiocManager::install("qvalue")
 ```{r echo=FALSE}
 setwd("/home/ismini/Documents/bioinfo-grad/mavrothalassitis/input-data")
 ####read files
-header0 <- sapply(read.csv("New_Targets.csv", header=F, sep=",", 
+header0 <- sapply(read.csv("ChIPseq_genes.csv", header=F, sep=",", 
                           check.names=FALSE, nrow=2) , paste, collapse="_")
 
-targets = read.csv("New_Targets.csv", sep=",", header = F,
+targets = read.csv("ChIPseq_genes.csv", sep=",", header = F,
                      check.names=FALSE, skip=2, col.names=header0)
 dim_targets <- dim(targets)
-cat("dimensions of New_Targets file:") 
+cat("dimensions of ChIPseq file:") 
 dim_targets
 
 #upper case to genes strings
@@ -251,7 +251,7 @@ cat("mean of q values:", mean_qval)
 ```{r, eval=TRUE, echo=FALSE}
 ###Write results to files
 
-setwd("/home/ismini/Documents/bioinfo-grad/mavrothalassitis/New_targets/")
+setwd("/home/ismini/Documents/bioinfo-grad/mavrothalassitis/ChIPseq/")
 
 ###new_targets vs genes_batch#####################################
 max_genes_batch_comparisons <- max(count_genes_targets_genes_batch) #it is 71
@@ -275,12 +275,12 @@ final1 = rbind(labels1, fishers_targets_genes_batch, pvalues_bonf[1:l_genes_batc
 #split header back to 4 rows 
 DF1 <- read.table(text=final1[1,], sep ="_", as.is = TRUE)
 final_targets_genes_batch = rbind(t(DF1),  final1[-1,])
-write.table(final_targets_genes_batch, "final_new_targets_genes_batch.csv", sep=",", na="")
+write.table(final_targets_genes_batch, "final_ChIPseq_genes_batch.csv", sep=",", na="")
 ```
 
 
 ```{r,  echo=FALSE}
-setwd("/home/ismini/Documents/bioinfo-grad/mavrothalassitis/New_targets/")
+setwd("/home/ismini/Documents/bioinfo-grad/mavrothalassitis/ChIPseq/")
 ###new_targets vs genes_OldProt##########################
 
 max_genes_OldProt_comparisons <- max(count_genes_targets_genes_OldProt) #it is 71
@@ -308,7 +308,7 @@ common2)
 DF2 <- read.table(text=final2[1,], sep = "_", as.is = TRUE)
 
 final_targets_genes_OldProt = rbind(t(DF2), final2[-1,])
-write.table(final_targets_genes_OldProt, "final_new_targets_genes_OldProt.csv", sep=",", na="")
+write.table(final_targets_genes_OldProt, "final_ChIPseq_genes_OldProt.csv", sep=",", na="")
 
 
 ###new_targets vs genes_OldVSall################################
@@ -339,7 +339,7 @@ final3 = rbind(labels3,
 DF3 <- read.table(text=final3[1,], sep = "_", as.is = TRUE)
 
 final_targets_genes_OldVSall = rbind(t(DF3), final3[-1,])
-write.table(final_targets_genes_OldVSall, "final_new_targets_genes_OldVSall.csv", sep=",", na="")
+write.table(final_targets_genes_OldVSall, "final_ChIPseq_genes_OldVSall.csv", sep=",", na="")
 
 ###new_targets vs genes_1_2_4-8################################
 
@@ -368,7 +368,7 @@ final4 = rbind(labels4,
 DF4 <- read.table(text=final4[1,], sep = "_", as.is = TRUE)
 
 final_targets_genes_1_2_4_8 = rbind(t(DF4), final4[-1,])
-write.table(final_targets_genes_1_2_4_8, "final_new_targets_genes_1_2_4_8.csv", sep=",", na="")
+write.table(final_targets_genes_1_2_4_8, "final_ChIPseq_genes_1_2_4_8.csv", sep=",", na="")
 
 
 #merge 3 last files to proceed with analysis
@@ -388,9 +388,9 @@ write.table(final_targets_genes_1_2_4_8, "final_new_targets_genes_1_2_4_8.csv", 
 
 ### Common genes with fdr<0.05:
 ```{r, echo=FALSE}
-setwd("/home/ismini/Documents/bioinfo-grad/mavrothalassitis/New_targets/")
+setwd("/home/ismini/Documents/bioinfo-grad/mavrothalassitis/ChIPseq/")
 
-all_labels <- c(labels1, labels2, labels3)
+all_labels <- c(labels1, labels2, labels3, labels4)
 max_rows <- max(max_genes_batch_comparisons, max_genes_OldProt_comparisons, max_genes_OldVSall_comparisons, max_genes_1_2_4_8_comparisons)
 common1 <- apply (common1, 2, function (x) {length (x) <- max_rows; return (x)})
 common2 <- apply (common2, 2, function (x) {length (x) <- max_rows; return (x)})
@@ -413,7 +413,7 @@ sign_targets <- rbind(labels(pvalues_mat[,sign_p_values_index]), all_labels[sign
 dimnames(sign_targets) <- list(c("Gene list", "Comparison", "pvalue", "Bonferroni correction", "BH correction", "q values", "common genes", rep("", (dim(sign_targets)[1]-7))), c(1:length(sign_p_values_index)))
 
 
-write.table(sign_targets, "sign_new_targets.csv", sep=",", na="")
+write.table(sign_targets, "sign_ChIPseq.csv", sep=",", na="")
 
 
 #Common genes with an fdr<0.05
@@ -426,7 +426,7 @@ dimnames(sign_common_mat) <- list(c("Gene list", "Comparison", "common genes", r
 #sign_fdr_genes <- unique(sign_common[,!is.na(sign_common) & !sign_common==""])
 #sign_fdr_genes
 
-write.table(sign_common_mat, "sign_fdr_genes.csv", sep=",", na="")
+write.table(sign_common_mat, "sign_fdr_genes_ChIPseq.csv", sep=",", na="")
 #sign_matrix <- matrix(data=unlist(strsplit(sign_new_targets[1,], " versus ")), nrow=2,ncol=10)
 #rm(list=ls())
 ```
@@ -483,9 +483,9 @@ write.table(fun_annot_mat_mm[,1:578], "funct_annot_sign_fdr_genes_mmusculus_part
 
 write.table(fun_annot_mat_hs, "funct_annot_sign_fdr_genes_hsapiens.csv", sep=",",  na="")
 ```{r, echo=FALSE}
-setwd("/home/ismini/Documents/bioinfo-grad/mavrothalassitis/New_targets/")
+setwd("/home/ismini/Documents/bioinfo-grad/mavrothalassitis/ChIPseq/")
 
-isws_etsi = function(mat1,mat2){
+isws_etsi = function(mat1,mat2,file_name){
 
 ###mat1 is a matrix with the results of functional annotation returned from gprofiler
 ###mat2 is the matrix containing common genes in each column from each comparison
@@ -498,13 +498,14 @@ dim1 = dim(mat1[x][[1]]["p.value"])[1]
 if (dim1==0){
 dim1=1
 #initialize a matrix
-m = matrix(NA, nrow = dim1, ncol = 5)
+m = matrix(NA, nrow = dim1, ncol = 6)
 
-m[,1] = labels(pvalues_mat[, sign_fdr_index])[x]
-m[,2] = all_labels[sign_fdr_index][x]
-m[,3] = pvalues[sign_fdr_index][x]
-m[,4] = pvalues_fdr[sign_fdr_index][x]
-m[,5] = qobj$qvalues[sign_fdr_index][x]
+m[,1] = file_name
+m[,2] = labels(pvalues_mat[, sign_fdr_index])[x]
+m[,3] = all_labels[sign_fdr_index][x]
+m[,4] = pvalues[sign_fdr_index][x]
+m[,5] = pvalues_fdr[sign_fdr_index][x]
+m[,6] = qobj$qvalues[sign_fdr_index][x]
 #m[,6] = mat1[x][[1]]["p.value"]
 #m[,7] = mat1[x][[1]]["intersection"]
 #m[,8] = mat1[x][[1]]["term.name"]
@@ -519,13 +520,14 @@ list_df[[x]] = m_df
 }
 else {
 #initialize a matrix
-m = matrix(NA, nrow = dim1, ncol = 5)
+m = matrix(NA, nrow = dim1, ncol = 6)
 
-m[,1] = labels(pvalues_mat[, sign_fdr_index])[x]
-m[,2] = all_labels[sign_fdr_index][x]
-m[,3] = pvalues[sign_fdr_index][x]
-m[,4] = pvalues_fdr[sign_fdr_index][x]
-m[,5] = qobj$qvalues[sign_fdr_index][x]
+m[,1] = file_name
+m[,2] = labels(pvalues_mat[, sign_fdr_index])[x]
+m[,3] = all_labels[sign_fdr_index][x]
+m[,4] = pvalues[sign_fdr_index][x]
+m[,5] = pvalues_fdr[sign_fdr_index][x]
+m[,6] = qobj$qvalues[sign_fdr_index][x]
 #m[,6] = mat1[x][[1]]["p.value"]
 #m[,7] = mat1[x][[1]]["intersection"]
 #m[,8] = mat1[x][[1]]["term.name"]
@@ -543,24 +545,24 @@ list_df
 }
 
 ###Mus musculus
-funct_annot_mm = isws_etsi(result_mm, sign_common)
+funct_annot_mm = isws_etsi(result_mm, sign_common, file_name="ChIPseq")
 
 super_mat_mm = do.call(rbind, funct_annot_mm)
 dim(super_mat_mm)
-colnames(super_mat_mm) = c("dataset", "comparison", "comparison_pvalue", "comparison_fdr", "comparison_qvalue", "gprofiler_pvalue", "gprofiler_genes", "gprofiler_GO_terms", "common_genes" )
+colnames(super_mat_mm) = c("filename", "dataset", "comparison", "comparison_pvalue", "comparison_fdr", "comparison_qvalue", "gprofiler_pvalue", "gprofiler_genes", "gprofiler_GO_terms", "common_genes" )
 
-write.table(super_mat_mm[,1:8], "isws_etsi_mus_musculus_new_targets.csv", sep=",",  na="")
+write.table(super_mat_mm[,1:9], "isws_etsi_mus_musculus_ChIPseq.csv", sep=",",  na="", row.names = FALSE)
 
 ###Homo sapiens
-funct_annot_hs = isws_etsi(result_hs, sign_common)
+funct_annot_hs = isws_etsi(result_hs, sign_common, file_name="ChIPseq")
 
 super_mat_hs = do.call(rbind, funct_annot_hs)
 dim(super_mat_hs)
-colnames(super_mat_hs) = c("dataset", "comparison", "comparison_pvalue", "comparison_fdr", "comparison_qvalue", "gprofiler_pvalue", "gprofiler_genes", "gprofiler_GO_terms", "common_genes" )
+colnames(super_mat_hs) = c("filename", "dataset", "comparison", "comparison_pvalue", "comparison_fdr", "comparison_qvalue", "gprofiler_pvalue", "gprofiler_genes", "gprofiler_GO_terms", "common_genes" )
 
-write.table(super_mat_hs[,1:8], "isws_etsi_homo_sapiens_new_targets.csv", sep=",",  na="")
+write.table(super_mat_hs[,1:9], "isws_etsi_homo_sapiens_ChIPseq.csv", sep=",",  na="", row.names = FALSE)
 
-save.image(file="New_targets_work_space.RData")
+save.image(file="ChIPseq_work_space.RData")
 ```
 com_g = mapply(as.matrix, super_mat_mm[,9])
 com_g = lapply(com_g, t)

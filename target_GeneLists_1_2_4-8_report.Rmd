@@ -400,11 +400,9 @@ result_mm <- apply(sign_common, 2, gprofiler, organism = "mmusculus", significan
 result_hs <- apply(sign_common, 2, gprofiler, organism = "hsapiens", significant = T, src_filter = NULL )
 
 ###fdr correction of p values
-result_mm_fdr <- apply(sign_common, 2, gprofiler, organism = "mmusculus", significant = T, src_filter = NULL, 
-correction_method = "fdr")
+#result_mm_fdr <- apply(sign_common, 2, gprofiler, organism = "mmusculus", significant = T, src_filter = NULL, correction_method = "fdr")
 
-result_hs_fdr <- apply(sign_common, 2, gprofiler, organism = "hsapiens", significant = T, src_filter = NULL, 
-correction_method = "fdr")
+#result_hs_fdr <- apply(sign_common, 2, gprofiler, organism = "hsapiens", significant = T, src_filter = NULL, correction_method = "fdr")
 
 ```
 #a function to combine annotation data with common genes lists to a matrix
