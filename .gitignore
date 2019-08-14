@@ -1,5 +1,6 @@
 *.RData
 *.Rhistory
+*.html
 analysis_with_dataset_genes/
 input-data/
 New_targets/

@@ -1,5 +1,5 @@
 ---
-title: "target_GeneLists_1_2_4-8"
+title: "target_GeneLists_1_2_4-8 vs targets"
 author: "Ismini"
 date: "August 12, 2019"
 output: html_document
@@ -7,12 +7,14 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+load(file = "GeneLists_work_space.RData")
 ```
-
+rm(list=ls())
 ## Dimensions of each file:
 ```{r echo=FALSE}
 setwd("/home/ismini/Documents/bioinfo-grad/mavrothalassitis/input-data")
 ####read files
+
 label_rows = 4
 header0 <- sapply(read.csv("target_GeneLists_1_2_4-8.csv", header=F, sep=",", 
                           check.names=FALSE, nrow=label_rows) , paste, collapse="_")
@@ -27,40 +29,36 @@ dim_new_targets
 new_targets <- apply(new_targets, 2, toupper)
 new_targets <- as.data.frame(new_targets)
 
-#GeneLists_OldProt: read the 6 first rows as header
-header1 <- sapply(read.csv("GeneLists_OldProt.csv", header=F, sep=",", 
-                          check.names=FALSE, nrow=6) , paste, collapse="_")
-
-genes_OldProt <- read.csv("GeneLists_OldProt.csv", sep=",", header = F,
-                     check.names=FALSE, skip=6, col.names=header1)
+#read frog file and call it genes_OldProt
+genes_OldProt <- read.csv("Frog_Clusters.csv", sep=",", header = T)
 dim_genes_OldProt <- dim(genes_OldProt)
-cat("dimensions of GeneLists_OldProt file:") 
+cat("dimensions of Frog_Clusters file:") 
 dim_genes_OldProt
 
 genes_OldProt <- apply(genes_OldProt, 2, toupper)
 genes_OldProt <- as.data.frame(genes_OldProt)
 
-#Gene_lists_quant_batch: read the 4 first rows as header
-header2 <- sapply(read.csv("Gene_lists_quant_batch_v2.csv", header=F, sep=",", 
-                          check.names=FALSE, nrow=4) , paste, collapse="_")
+#New_Targets.csv: read the 2 first rows as header and call it genes_batch
+header2 <- sapply(read.csv("New_Targets.csv", header=F, sep=",", 
+                          check.names=FALSE, nrow=2) , paste, collapse="_")
 
-genes_batch <- read.csv("Gene_lists_quant_batch_v2.csv", sep=",", header = F,
-                     check.names=FALSE, skip=4, col.names=header2)
+genes_batch <- read.csv("New_Targets.csv", sep=",", header = F,
+                     check.names=FALSE, skip=2, col.names=header2)
 dim_genes_batch <- dim(genes_batch)
-cat("dimensions of Gene_lists_quant_batch file:") 
+cat("dimensions of New_Targets.csv file:") 
 dim_genes_batch
 
 genes_batch <- apply(genes_batch, 2, toupper)
 genes_batch <- as.data.frame(genes_batch)
 
-#GeneLists_oldVSall: read the 6 first rows as header
-header3 <- sapply(read.csv("GeneLists_oldVSall.csv", header=F, sep=",", 
-                          check.names=FALSE, nrow=6) , paste, collapse="_")
+#ChIPseq_genes.csv: read the 2 first rows as header and call it genes_oldVSall
+header3 <- sapply(read.csv("ChIPseq_genes.csv", header=F, sep=",", 
+                          check.names=FALSE, nrow=2) , paste, collapse="_")
 
-genes_oldVSall <- read.csv("GeneLists_oldVSall.csv", sep=",", header = F,
-                     check.names=FALSE, skip=6, col.names=header3)
+genes_oldVSall <- read.csv("ChIPseq_genes.csv", sep=",", header = F,
+                     check.names=FALSE, skip=2, col.names=header3)
 dim_genes_OldVSall <- dim(genes_oldVSall)
-cat("dimensions of GeneLists_oldVSall file:") 
+cat("dimensions of ChIPseq_genes.csv:") 
 dim_genes_OldVSall
 
 genes_oldVSall <- apply(genes_oldVSall, 2, toupper)
@@ -171,17 +169,17 @@ hist(pvalues, main="Density plot of p values",breaks=seq(0,1,0.05), freq=FALSE)
 inter_1 <- intersect(unique(unlist(new_targets)), unique(unlist(genes_batch)))
 if (inter_1=="") {inter_1=0}
 ###else print(length(unique(inter_1[!is.na(inter_1) & !inter_1==""])))
-cat("common genes between new_targets and genes_batch:")
+cat("common genes between GeneLists_1_2_4-8 and New_targets:")
 length(unique(inter_1[!is.na(inter_1) & !inter_1==""]))
 
 inter_2 <- intersect(unique(unlist(new_targets)), unique(unlist(genes_OldProt)))
 if (inter_2=="") {inter_2=0}
-cat("common genes between new_targets and genes_OldProt:")
+cat("common genes between GeneLists_1_2_4-8 and Frog_Clusters:")
 length(unique(inter_2[!is.na(inter_2) & !inter_2==""]))
 
 inter_3 <- intersect(unique(unlist(new_targets)), unique(unlist(genes_oldVSall)))
 if (inter_3=="") {inter_3=0}
-cat("common genes between new_targets and genes_oldVSall:")
+cat("common genes between GeneLists_1_2_4-8 and ChipSeq:")
 length(unique(inter_3[!is.na(inter_3) & !inter_3==""]))
 
 
@@ -239,7 +237,7 @@ cat("mean of q values:", mean_qval)
 
 setwd("/home/ismini/Documents/bioinfo-grad/mavrothalassitis/GeneLists_1_2_4-8/")
 
-###new_targets vs genes_batch#####################################
+###GeneLists vs new_targets#####################################
 max_genes_batch_comparisons <- max(count_genes_targets_genes_batch) #it is 71
 common1 = sapply (common_genes_targets_genes_batch, function (x) {length (x) <- max_genes_batch_comparisons; return (x)})
 
@@ -261,8 +259,8 @@ final1 = rbind(labels1, fishers_targets_genes_batch, pvalues_bonf[1:l_genes_batc
 #split header back to 4 rows 
 DF1 <- read.table(text=final1[1,], sep ="_", as.is = TRUE)
 final_new_targets_genes_batch = rbind(t(DF1),  final1[-1,])
-write.table(final_new_targets_genes_batch[,1:512], "final_GeneLists_1_2_4-8_genes_batch_part1.csv", sep=",", na="")
-write.table(final_new_targets_genes_batch[,513:1024], "final_GeneLists_1_2_4-8_genes_batch_part2.csv", sep=",", na="")
+
+write.table(final_new_targets_genes_batch, "final_GeneLists_1_2_4-8_New_targets.csv", sep=",", na="")
 
 ```
 
@@ -270,7 +268,7 @@ write.table(final_new_targets_genes_batch[,513:1024], "final_GeneLists_1_2_4-8_g
 ```{r,  echo=FALSE}
 setwd("/home/ismini/Documents/bioinfo-grad/mavrothalassitis/GeneLists_1_2_4-8/")
 
-###new_targets vs genes_OldProt##########################
+###GeneLists vs Frog_Clusters##########################
 
 max_genes_OldProt_comparisons <- max(count_genes_targets_genes_OldProt) #it is 71
 common2 = sapply (common_genes_targets_genes_OldProt, function (x) {length (x) <- max_genes_OldProt_comparisons; return (x)})
@@ -297,10 +295,10 @@ common2)
 DF2 <- read.table(text=final2[1,], sep = "_", as.is = TRUE)
 
 final_new_targets_genes_OldProt = rbind(t(DF2), final2[-1,])
-write.table(final_new_targets_genes_OldProt, "final_GeneLists_1_2_4-8_genes_OldProt.csv", sep=",", na="")
+write.table(final_new_targets_genes_OldProt, "final_GeneLists_1_2_4-8_Frog_Clusters.csv", sep=",", na="")
 
 
-###new_targets vs genes_OldVSall################################
+###GeneLists vs ChIPseq################################
 
 max_genes_OldVSall_comparisons <- max(count_genes_targets_genes_OldVSall)
 common3 = sapply (common_genes_targets_genes_OldVSall, function (x) {length (x) <- max_genes_OldVSall_comparisons; return (x)})
@@ -327,8 +325,9 @@ final3 = rbind(labels3,
 DF3 <- read.table(text=final3[1,], sep = "_", as.is = TRUE)
 
 final_new_targets_genes_OldVSall = rbind(t(DF3), final3[-1,])
-write.table(final_new_targets_genes_OldVSall[,1:544], "final_GeneLists_1_2_4-8_genes_OldVSall_part1.csv", sep=",", na="")
-write.table(final_new_targets_genes_OldVSall[,545:1088], "final_GeneLists_1_2_4-8_genes_OldVSall_part2.csv", sep=",", na="")
+
+write.table(final_new_targets_genes_OldVSall, "final_GeneLists_1_2_4-8_ChIPseq.csv", sep=",", na="")
+#write.table(final_new_targets_genes_OldVSall[,545:1088], "final_GeneLists_1_2_4-8_genes_OldVSall_part2.csv", sep=",", na="")
 
 
 #merge 3 last files to proceed with analysis
@@ -357,36 +356,33 @@ common2 <- apply (common2, 2, function (x) {length (x) <- max_rows; return (x)})
 common3 <- apply (common3, 2, function (x) {length (x) <- max_rows; return (x)})
 
 all_common <- cbind(common1, common2, common3)
-dim(common3)
+
 sign_p_values_index <- which(pvalues<0.05)
 
-pvalues_mat <- matrix(pvalues, nrow=1, dimnames=(list("1", c(rep("genes_batch",l_genes_batch_comparisons), rep("OldProt", l_genes_OldProt_comparisons), rep("OldVSall", l_genes_OldVSall_comparisons) )) ))
+pvalues_mat <- matrix(pvalues, nrow=1, dimnames=(list("1", c(rep("New_targets",l_genes_batch_comparisons), rep("Frog_Clusters", l_genes_OldProt_comparisons), rep("ChIPseq", l_genes_OldVSall_comparisons) )) ))
 
-pvalues_bonf_mat <- matrix(pvalues_bonf, nrow=1, dimnames=(list("1", c(rep("genes_batch",l_genes_batch_comparisons), rep("OldProt", l_genes_OldProt_comparisons), rep("OldVSall", l_genes_OldVSall_comparisons) )) ))
+pvalues_bonf_mat <- matrix(pvalues_bonf, nrow=1, dimnames=(list("1", c(rep("New_targets",l_genes_batch_comparisons), rep("Frog_Clusters", l_genes_OldProt_comparisons), rep("ChIPseq", l_genes_OldVSall_comparisons) )) ))
 
-pvalues_fdr <- matrix(pvalues_fdr, nrow=1, dimnames=(list("1", c(rep("genes_batch",l_genes_batch_comparisons), rep("OldProt", l_genes_OldProt_comparisons), rep("OldVSall", l_genes_OldVSall_comparisons) )) ))
+pvalues_fdr <- matrix(pvalues_fdr, nrow=1, dimnames=(list("1", c(rep("New_targets",l_genes_batch_comparisons), rep("Frog_Clusters", l_genes_OldProt_comparisons), rep("ChIPseq", l_genes_OldVSall_comparisons) )) ))
 
-qvalues_mat <- matrix(qobj$qvalues, nrow=1, dimnames=(list("1", c(rep("genes_batch",l_genes_batch_comparisons), rep("OldProt", l_genes_OldProt_comparisons), rep("OldVSall", l_genes_OldVSall_comparisons) )) ))
+qvalues_mat <- matrix(qobj$qvalues, nrow=1, dimnames=(list("1", c(rep("New_targets",l_genes_batch_comparisons), rep("Frog_Clusters", l_genes_OldProt_comparisons), rep("ChIPseq", l_genes_OldVSall_comparisons) )) ))
 
 sign_new_targets <- rbind(labels(pvalues_mat[,sign_p_values_index]), all_labels[sign_p_values_index],pvalues_mat[,sign_p_values_index],  pvalues_bonf[sign_p_values_index], pvalues_fdr[sign_p_values_index], qobj$qvalues[sign_p_values_index],  all_common[,sign_p_values_index])
-dimnames(sign_new_targets) <- list(c("Gene list", "Comparison", "pvalue", "Bonferroni correction", "BH correction", "q values", "common genes", rep("", 231)), c(1:length(sign_p_values_index)))
+dimnames(sign_new_targets) <- list(c("Gene list", "Comparison", "pvalue", "Bonferroni correction", "BH correction", "q values", "common genes", rep("", 213)), c(1:length(sign_p_values_index)))
 
 
-write.table(sign_new_targets[,1:649], "sign_GeneLists_1_2_4-8_part1.csv", sep=",", na="")
-write.table(sign_new_targets[,650:1298], "sign_GeneLists_1_2_4-8_part2.csv", sep=",", na="")
+write.table(sign_new_targets, "sign_GeneLists_1_2_4-8.csv", sep=",", na="")
 
 #Common genes with an fdr<0.05
 sign_fdr_index <-  which(pvalues<0.05 & pvalues_fdr<0.05)
 sign_common <- all_common[,sign_fdr_index]
 
-sign_common_mat <- rbind( labels(pvalues_mat[,sign_fdr_index]), all_labels[sign_fdr_index], sign_common
-)
-dimnames(sign_common_mat) <- list(c("Gene list", "Comparison", "common genes", rep("", 231)), c(1:length(sign_fdr_index)))
+sign_common_mat <- rbind( labels(pvalues_mat[,sign_fdr_index]), all_labels[sign_fdr_index], sign_common)
+dimnames(sign_common_mat) <- list(c("Gene list", "Comparison", "common genes", rep("", 213)), c(1:length(sign_fdr_index)))
 #sign_fdr_genes <- unique(sign_common[,!is.na(sign_common) & !sign_common==""])
 #sign_fdr_genes
 
-write.table(sign_common_mat[,1:576], "sign_fdr_genes_part1.csv", sep=",", na="")
-write.table(sign_common_mat[,577:1152], "sign_fdr_genes_part2.csv", sep=",", na="")
+write.table(sign_common_mat, "sign_fdr_genes.csv", sep=",", na="")
 
 #sign_matrix <- matrix(data=unlist(strsplit(sign_new_targets[1,], " versus ")), nrow=2,ncol=10)
 #rm(list=ls())
@@ -398,9 +394,18 @@ write.table(sign_common_mat[,577:1152], "sign_fdr_genes_part2.csv", sep=",", na=
 
 library(gProfileR)
 
+###gSCS correction of p values
 result_mm <- apply(sign_common, 2, gprofiler, organism = "mmusculus", significant = T, src_filter = NULL )
 
 result_hs <- apply(sign_common, 2, gprofiler, organism = "hsapiens", significant = T, src_filter = NULL )
+
+###fdr correction of p values
+result_mm_fdr <- apply(sign_common, 2, gprofiler, organism = "mmusculus", significant = T, src_filter = NULL, 
+correction_method = "fdr")
+
+result_hs_fdr <- apply(sign_common, 2, gprofiler, organism = "hsapiens", significant = T, src_filter = NULL, 
+correction_method = "fdr")
+
 ```
 #a function to combine annotation data with common genes lists to a matrix
 fun_annot_mat <- function(mat1, mat2){
@@ -504,23 +509,48 @@ list_df
 }
 
 ###Mus musculus
+
 funct_annot_mm = isws_etsi(result_mm, sign_common)
 
 super_mat_mm = do.call(rbind, funct_annot_mm)
 dim(super_mat_mm)
 colnames(super_mat_mm) = c("dataset", "comparison", "comparison_pvalue", "comparison_fdr", "comparison_qvalue", "gprofiler_pvalue", "gprofiler_genes", "gprofiler_GO_terms", "common_genes" )
 
-write.table(super_mat_mm[,1:8], "isws_etsi_mus_musculus.csv", sep=",",  na="")
+write.table(super_mat_mm[,1:8], "isws_etsi_mus_musculus.csv", sep=",",  na="", row.names=FALSE)
 
 ###Homo sapiens
+
 funct_annot_hs = isws_etsi(result_hs, sign_common)
 
 super_mat_hs = do.call(rbind, funct_annot_hs)
 dim(super_mat_hs)
 colnames(super_mat_hs) = c("dataset", "comparison", "comparison_pvalue", "comparison_fdr", "comparison_qvalue", "gprofiler_pvalue", "gprofiler_genes", "gprofiler_GO_terms", "common_genes" )
 
-write.table(super_mat_hs[,1:8], "isws_etsi_homo_sapiens.csv", sep=",",  na="")
+write.table(super_mat_hs[,1:8], "isws_etsi_homo_sapiens.csv", sep=",",  na="", row.names=FALSE)
 
+####fdr corrected p values
+
+###Mus musculus
+
+funct_annot_mm_fdr = isws_etsi(result_mm_fdr, sign_common)
+
+super_mat_mm_fdr = do.call(rbind, funct_annot_mm_fdr)
+dim(super_mat_mm_fdr)
+colnames(super_mat_mm_fdr) = c("dataset", "comparison", "comparison_pvalue", "comparison_fdr", "comparison_qvalue", "gprofiler_pvalue", "gprofiler_genes", "gprofiler_GO_terms", "common_genes" )
+
+write.table(super_mat_mm_fdr[,1:8], "isws_etsi_mus_musculus_fdr.csv", sep=",",  na="", row.names=FALSE)
+
+###Homo sapiens
+
+funct_annot_hs_fdr = isws_etsi(result_hs_fdr, sign_common)
+
+super_mat_hs_fdr = do.call(rbind, funct_annot_hs_fdr)
+dim(super_mat_hs_fdr)
+colnames(super_mat_hs_fdr) = c("dataset", "comparison", "comparison_pvalue", "comparison_fdr", "comparison_qvalue", "gprofiler_pvalue", "gprofiler_genes", "gprofiler_GO_terms", "common_genes" )
+
+write.table(super_mat_hs_fdr[,1:8], "isws_etsi_homo_sapiens_fdr.csv", sep=",",  na="", row.names=FALSE)
+
+#save.image (file = "GeneLists_work_space.RData")
 ```
 com_g = mapply(as.matrix, super_mat_mm[,9])
 com_g = lapply(com_g, t)
